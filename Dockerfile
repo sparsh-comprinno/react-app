@@ -1,5 +1,5 @@
 # Stage 1: Build the React App
-FROM node:18-alpine AS build
+FROM public.ecr.aws/nginx/nginx:alpine AS build
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 
 # Stage 2: Serve with Nginx
-FROM nginx:alpine
+FROM public.ecr.aws/nginx/nginx:alpine
 
 # Copy built files from the previous stage to Nginx
 COPY --from=build /app/build /usr/share/nginx/html
