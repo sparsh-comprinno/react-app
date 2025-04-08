@@ -1,5 +1,5 @@
 # Stage 1: Build the React App
-FROM 203918887881.dkr.ecr.us-east-1.amazonaws.com/customnginxalpine:latest AS build
+FROM 203918887881.dkr.ecr.us-east-1.amazonaws.com/customnodealpine:latest AS build
 
 WORKDIR /app
 
