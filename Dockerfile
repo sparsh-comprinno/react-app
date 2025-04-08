@@ -1,5 +1,5 @@
 # Stage 1: Build the React App
-FROM node:18-alpine AS build
+FROM public.ecr.aws/nginx/nginx:alpine AS build
 
 WORKDIR /app
 
