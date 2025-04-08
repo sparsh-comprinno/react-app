@@ -20,6 +20,8 @@ phases:
       - printf '[{"name":"app-container","imageUri":"%s"}]' $ECR_REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - echo "Updating task definition file..."
       - sed -i "s|<IMAGE_NAME>|$ECR_REPOSITORY_URI:$IMAGE_TAG|g" taskdef.json
+      - ls -al
+      - cat taskdef.json
 
 artifacts:
   files:
