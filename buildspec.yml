@@ -3,13 +3,14 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo Logging in to Docker Hub...
+      - echo "Logging in to Docker Hub..."
       - export DOCKER_USER=$(aws secretsmanager get-secret-value --secret-id docker-credentials --query SecretString --output text | jq -r '.username')
       - export DOCKER_PASS=$(aws secretsmanager get-secret-value --secret-id docker-credentials --query SecretString --output text | jq -r '.password')
       - echo "$DOCKER_PASS" | docker login --username "$DOCKER_USER" --password-stdin
-      - echo Logging in to Amazon ECR...
+      - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
-      - IMAGE_TAG=$(date +%s)
+      - echo "Setting IMAGE_TAG..."
+      - export IMAGE_TAG=$(date +%s)
 
   build:
     commands:
@@ -17,9 +18,10 @@ phases:
       - docker build -t $ECR_REPOSITORY_URI:$IMAGE_TAG .
       - echo "Pushing Image to ECR..."
       - docker push $ECR_REPOSITORY_URI:$IMAGE_TAG
+      - echo "Creating imagedefinitions.json..."
       - printf '[{"name":"app-container","imageUri":"%s"}]' "$ECR_REPOSITORY_URI:$IMAGE_TAG" > imagedefinitions.json
       - echo "Updating task definition file..."
-      - sed -i "s|\"image\": \"IMAGE_NAME\"|\"image\": \"$ECR_REPOSITORY_URI:$IMAGE_TAG\"|g" taskdef.json
+      - sed -i "s|\"image\": \"IMAGE_NAME\"|\"image\": \"${ECR_REPOSITORY_URI}:${IMAGE_TAG}\"|g" taskdef.json
       - ls -al
       - cat taskdef.json
 
