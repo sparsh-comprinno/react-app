@@ -21,7 +21,7 @@ phases:
       - echo "Creating imagedefinitions.json..."
       - printf '[{"name":"app-container","imageUri":"%s"}]' "$ECR_REPOSITORY_URI:$IMAGE_TAG" > imagedefinitions.json
       - echo "Updating task definition file..."
-      - sed -i "s|\"image\": \"IMAGE_NAME\"|\"image\": \"${ECR_REPOSITORY_URI}:${IMAGE_TAG}\"|g" taskdef.json
+      - sed -i '"s|\"image\": \"IMAGE_NAME\"|\"image\": \"${ECR_REPOSITORY_URI}:${IMAGE_TAG}\"|g"' taskdef.json
       - ls -al
       - cat taskdef.json
 
