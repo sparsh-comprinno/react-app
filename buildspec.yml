@@ -10,6 +10,7 @@ phases:
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
       - IMAGE_TAG=$(date +%s)
+  
   build:
     commands:
       - echo "Building Docker Image..."
