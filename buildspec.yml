@@ -9,8 +9,7 @@ phases:
       - echo "$DOCKER_PASS" | docker login --username "$DOCKER_USER" --password-stdin
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
-      - export IMAGE_TAG=$(date +%s)
-      - echo "IMAGE_TAG is set to $IMAGE_TAG"
+      - IMAGE_TAG=$(date +%s)
 
   build:
     commands:
@@ -18,13 +17,10 @@ phases:
       - docker build -t $ECR_REPOSITORY_URI:$IMAGE_TAG .
       - echo "Pushing Image to ECR..."
       - docker push $ECR_REPOSITORY_URI:$IMAGE_TAG
-      - echo "Creating imagedefinitions.json..."
-      - printf '[{"name":"app-container","imageUri":"%s"}]' "$ECR_REPOSITORY_URI:$IMAGE_TAG" > imagedefinitions.json
+      - printf '[{"name":"app-container","imageUri":"%s"}]' $ECR_REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - echo "Updating task definition file..."
       - sed -i "s|<IMAGE_NAME>|$ECR_REPOSITORY_URI:$IMAGE_TAG|g" taskdef.json
-      - echo "Verifying imagedefinitions.json content..."
-      - cat imagedefinitions.json
-      - echo "Verifying taskdef.json content..."
+      - ls -al
       - cat taskdef.json
 
 artifacts:
