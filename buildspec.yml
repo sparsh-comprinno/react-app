@@ -1,29 +1,20 @@
 version: 0.2
 
 phases:
+  install:
+    runtime-versions:
+      nodejs: latest
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY
-      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 203918887881.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
-      - echo Building the React app...
-      - npm install
-      - npm run build
       - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
-
+      - docker build -t react-app .
+      - docker tag react-app:latest 203918887881.dkr.ecr.us-east-1.amazonaws.com/react-app:latest
   post_build:
     commands:
       - echo Pushing Docker image to ECR...
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions file...
-      - printf '[{"name":"react-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - cat imagedefinitions.json
-
-artifacts:
-  files:
-    - imagedefinitions.json
+      - docker push 203918887881.dkr.ecr.us-east-1.amazonaws.com/react-app:latest
+      - echo Build completed successfully!
