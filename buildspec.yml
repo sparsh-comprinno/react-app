@@ -3,29 +3,27 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo "Logging in to Docker Hub..."
-      - export DOCKER_USER=$(aws secretsmanager get-secret-value --secret-id docker-credentials --query SecretString --output text | jq -r '.username')
-      - export DOCKER_PASS=$(aws secretsmanager get-secret-value --secret-id docker-credentials --query SecretString --output text | jq -r '.password')
-      - echo "$DOCKER_PASS" | docker login --username "$DOCKER_USER" --password-stdin
-      - echo "Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
-      - IMAGE_TAG=$(date +%s)
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
 
   build:
     commands:
-      - echo "Building Docker Image..."
-      - docker build -t "$ECR_REPOSITORY_URI:$IMAGE_TAG" .
-      - echo "Pushing Image to ECR..."
-      - docker push "$ECR_REPOSITORY_URI:$IMAGE_TAG"
-      - echo "Creating imagedefinitions.json..."
-      - printf '[{"name":"app-container","imageUri":"%s"}]' "$ECR_REPOSITORY_URI:$IMAGE_TAG" > imagedefinitions.json
-      - echo "Updating task definition file..."
-      - sed -i 's@IMAGE_NAME@'"$ECR_REPOSITORY_URI:$IMAGE_TAG"'@g' taskdef.json
-      - ls -al
-      - cat taskdef.json
+      - echo Building the React app...
+      - npm install
+      - npm run build
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+
+  post_build:
+    commands:
+      - echo Pushing Docker image to ECR...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"react-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json
 
 artifacts:
   files:
     - imagedefinitions.json
-    - taskdef.json
-    - appspec.yml
