@@ -23,6 +23,7 @@ phases:
       - docker tag react-app:latest $ECR_REPOSITORY:$IMAGE_TAG
       - echo "Creating imagedefinitions.json..."
       - printf '[{"name":"app-container","imageUri":"%s"}]' "$ECR_REPOSITORY:$IMAGE_TAG" > imagedefinitions.json
+      - cat imagedefinitions.json
 
   post_build:
     commands:
