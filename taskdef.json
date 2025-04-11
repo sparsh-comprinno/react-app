@@ -3,7 +3,7 @@
     "containerDefinitions": [
         {
             "name": "react-container",
-            "image": "203918887881.dkr.ecr.us-east-1.amazonaws.com/react-app:latest",
+            "image": "<IMAGE_NAME>",
             "cpu": 0,
             "portMappings": [
                 {
