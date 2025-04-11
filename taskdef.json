@@ -1,13 +1,13 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:203918887881:task-definition/blue-green-ecs-fargate-task:1",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:203918887881:task-definition/react-app-task:1",
     "containerDefinitions": [
         {
-            "name": "app-container",
-            "image": "IMAGE_NAME",
+            "name": "react-container",
+            "image": "203918887881.dkr.ecr.us-east-1.amazonaws.com/react-app:latest",
             "cpu": 0,
             "portMappings": [
                 {
-                    "name": "app-container-80-tcp",
+                    "name": "react-container-80-tcp",
                     "containerPort": 80,
                     "hostPort": 80,
                     "protocol": "tcp",
@@ -23,7 +23,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/blue-green-ecs-fargate-task",
+                    "awslogs-group": "/ecs/react-app-task",
                     "mode": "non-blocking",
                     "awslogs-create-group": "true",
                     "max-buffer-size": "25m",
@@ -35,7 +35,7 @@
             "systemControls": []
         }
     ],
-    "family": "blue-green-ecs-fargate-task",
+    "family": "react-app-task",
     "taskRoleArn": "arn:aws:iam::203918887881:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::203918887881:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
@@ -83,12 +83,12 @@
         "FARGATE"
     ],
     "cpu": "1024",
-    "memory": "2048",
+    "memory": "3072",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2025-04-07T12:18:33.677Z",
+    "registeredAt": "2025-04-10T10:57:42.033Z",
     "registeredBy": "arn:aws:iam::203918887881:user/sparsh",
     "enableFaultInjection": false,
     "tags": []
