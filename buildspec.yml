@@ -4,8 +4,9 @@ phases:
   pre_build:
     commands:
       - echo "Logging in to Docker Hub..."
-      - export DOCKER_USER=$(aws secretsmanager get-secret-value --secret-id docker-credentials -query SecretString --output text | jq -r '.username')
-      - export DOCKER_PASS=$(aws secretsmanager get-secret-value --secret-id docker-credentials --query SecretString --output text | jq -r '.password')
+      - DOCKER_SECRET=$(aws secretsmanager get-secret-value --secret-id docker-credentials --query SecretString --output text)
+      - export DOCKER_USER=$(echo "$DOCKER_SECRET" | jq -r '.username')   # Using "username" as key
+      - export DOCKER_PASS=$(echo "$DOCKER_SECRET" | jq -r '.password')   # Using "password" as key
       - echo "$DOCKER_PASS" | docker login --username "$DOCKER_USER" --password-stdin
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 203918887881.dkr.ecr.us-east-1.amazonaws.com
