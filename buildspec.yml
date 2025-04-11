@@ -8,6 +8,7 @@ env:
 phases:
   pre_build:
     commands:
+      - ls -al
       - echo "Fetching Docker credentials from Secrets Manager..."
       - DOCKER_SECRET=$(aws secretsmanager get-secret-value --secret-id docker-credentials --query SecretString --output text)
       - export DOCKER_USER=$(echo "$DOCKER_SECRET" | jq -r '.username')
@@ -24,14 +25,18 @@ phases:
       - echo "Creating imagedefinitions.json..."
       - printf '[{"name":"app-container","imageUri":"%s"}]' "$ECR_REPOSITORY:$IMAGE_TAG" > imagedefinitions.json
       - cat imagedefinitions.json
+      
 
   post_build:
     commands:
       - echo "Pushing Docker image to Amazon ECR..."
       - docker push $ECR_REPOSITORY:$IMAGE_TAG
       - echo "Build and push completed successfully."
+      - echo "Exporting ECS Task Definition..."
+      # - aws ecs describe-task-definition --task-definition react-app-task --query 'taskDefinition' > taskdef.json
 
 artifacts:
   files:
     - imagedefinitions.json
+    - taskdef.json
   discard-paths: yes
