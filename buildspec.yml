@@ -2,41 +2,53 @@ version: 0.2
 
 env:
   variables:
-    ECR_REPOSITORY: "203918887881.dkr.ecr.us-east-1.amazonaws.com/react-app"
+    REPOSITORY_URI: "203918887881.dkr.ecr.us-east-1.amazonaws.com/react-app"
     IMAGE_TAG: "latest"
 
 phases:
+  install:
+    commands:
+      - echo Setting up environment...
+      - echo Repository URI is $REPOSITORY_URI
+
   pre_build:
     commands:
-      - ls -al
+      - echo Logging starting build ...
       - echo "Fetching Docker credentials from Secrets Manager..."
       - DOCKER_SECRET=$(aws secretsmanager get-secret-value --secret-id docker-credentials --query SecretString --output text)
       - export DOCKER_USER=$(echo "$DOCKER_SECRET" | jq -r '.username')
       - export DOCKER_PASS=$(echo "$DOCKER_SECRET" | jq -r '.password')
       - echo "$DOCKER_PASS" | docker login --username "$DOCKER_USER" --password-stdin
       - echo "Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 203918887881.dkr.ecr.us-east-1.amazonaws.com
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
 
   build:
     commands:
-      - echo "Building the Docker image..."
-      - docker build -t react-app .
-      - docker tag react-app:latest $ECR_REPOSITORY:$IMAGE_TAG
-      - echo "Creating imagedefinitions.json..."
-      - printf '[{"name":"app-container","imageUri":"%s"}]' "$ECR_REPOSITORY:$IMAGE_TAG" > imagedefinitions.json
-      - cat imagedefinitions.json
-      
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - echo Creating image definitions...
+      - printf '[{"name":"app-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '{"ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
 
   post_build:
     commands:
-      - echo "Pushing Docker image to Amazon ECR..."
-      - docker push $ECR_REPOSITORY:$IMAGE_TAG
-      - echo "Build and push completed successfully."
-      - echo "Exporting ECS Task Definition..."
-      # - aws ecs describe-task-definition --task-definition react-app-task --query 'taskDefinition' > taskdef.json
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Image pushed successfully.
 
 artifacts:
-  files:
-    - imagedefinitions.json
-    - taskdef.json
-  discard-paths: yes
+  files: 
+    - 'imagedefinitions.json'
+    - 'appspec.yaml'
+    - 'taskdef.json'
+    - 'imageDetail.json'
+  secondary-artifacts:
+    DefinitionArtifact:
+      files:
+        - appspec.yaml
+        - taskdef.json
+    ImageArtifact:
+      files:
+        - imageDetail.json
