@@ -1,13 +1,13 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:203918887881:task-definition/react-app-task:2",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:203918887881:task-definition/blue-green-ecs-fargate-task:3",
     "containerDefinitions": [
         {
-            "name": "react-container",
-            "image": "<IMAGE_NAME>",
+            "name": "app-container",
+            "image": "<ImageURI>",
             "cpu": 0,
             "portMappings": [
                 {
-                    "name": "react-container-80-tcp",
+                    "name": "app-container-80-tcp",
                     "containerPort": 80,
                     "hostPort": 80,
                     "protocol": "tcp",
@@ -23,7 +23,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/react-app-task",
+                    "awslogs-group": "/ecs/blue-green-ecs-fargate-task",
                     "mode": "non-blocking",
                     "awslogs-create-group": "true",
                     "max-buffer-size": "25m",
@@ -35,11 +35,10 @@
             "systemControls": []
         }
     ],
-    "family": "react-app-task",
-    "taskRoleArn": "arn:aws:iam::203918887881:role/ecsTaskExecutionRole",
+    "family": "blue-green-ecs-fargate-task",
     "executionRoleArn": "arn:aws:iam::203918887881:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 2,
+    "revision": 3,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -57,9 +56,6 @@
         },
         {
             "name": "com.amazonaws.ecs.capability.docker-remote-api.1.28"
-        },
-        {
-            "name": "com.amazonaws.ecs.capability.task-iam-role"
         },
         {
             "name": "ecs.capability.execution-role-ecr-pull"
@@ -88,7 +84,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2025-04-11T12:07:27.417Z",
+    "registeredAt": "2025-04-14T12:43:27.464Z",
     "registeredBy": "arn:aws:iam::203918887881:user/sparsh",
     "enableFaultInjection": false,
     "tags": []
