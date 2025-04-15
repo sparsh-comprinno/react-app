@@ -86,6 +86,5 @@
     },
     "registeredAt": "2025-04-14T12:43:27.464Z",
     "registeredBy": "arn:aws:iam::203918887881:user/sparsh",
-    "enableFaultInjection": false,
-    "tags": []
+    "enableFaultInjection": false
 }
