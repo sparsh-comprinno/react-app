@@ -1,5 +1,5 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:203918887881:task-definition/blue-green-ecs-fargate-task:3",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:203918887881:task-definition/nodejs-task-definition:4",
     "containerDefinitions": [
         {
             "name": "app-container",
@@ -23,7 +23,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/blue-green-ecs-fargate-task",
+                    "awslogs-group": "/ecs/nodejs-task-definition",
                     "mode": "non-blocking",
                     "awslogs-create-group": "true",
                     "max-buffer-size": "25m",
@@ -35,10 +35,10 @@
             "systemControls": []
         }
     ],
-    "family": "blue-green-ecs-fargate-task",
+    "family": "nodejs-task-definition",
     "executionRoleArn": "arn:aws:iam::203918887881:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 3,
+    "revision": 4,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -72,19 +72,18 @@
     ],
     "placementConstraints": [],
     "compatibilities": [
-        "EC2",
-        "FARGATE"
+        "EC2"
     ],
     "requiresCompatibilities": [
-        "FARGATE"
+        "EC2"
     ],
-    "cpu": "1024",
-    "memory": "2048",
+    "cpu": "512",
+    "memory": "256",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2025-04-14T12:43:27.464Z",
+    "registeredAt": "2025-04-15T12:43:04.787Z",
     "registeredBy": "arn:aws:iam::203918887881:user/sparsh",
     "enableFaultInjection": false
 }
