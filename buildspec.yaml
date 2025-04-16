@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    REPOSITORY_URI: "203918887881.dkr.ecr.us-east-1.amazonaws.com/react-app"
+    REPOSITORY_URI: "203918887881.dkr.ecr.us-east-1.amazonaws.com/frontend-react-app"
     IMAGE_TAG: "latest"
 
 phases:
